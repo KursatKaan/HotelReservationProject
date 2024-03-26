@@ -1,0 +1,51 @@
+﻿@using System.Diagnostics.Metrics
+@model List<OurServiceDTO>
+@{
+    int counter = 1;
+}
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/AdminLayout/_AdminLayout.cshtml";
+}
+
+
+<a href="/OurService/Create/" class="btn btn-success">Yeni Hizmet Ekle <span class="btn-icon-right"><i class="fa fa-plus"></i></span></a>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Hizmet Listesi</h4>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped verticle-middle">
+                <thead>
+                    <tr>
+                        <th scope="col" class="col-1">#</th>
+                        <th scope="col" class="col-3">Hizmet Başlığı</th>
+                        <th scope="col" class="col-6">Açıklama</th>
+                        <th scope="col" class="col-2">Aksiyon</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><b>@counter</b></td>
+                            <td>@item.OurServiceTitle</td>
+                            <td>@item.OurServiceDescription</td>
+                            <td>
+                                <div class="d-flex flex-xs-column justify-content-md-between">
+                                    <a href="/OurService/Update/@item.ID" class="btn btn-warning mb-2 mx-2">Düzenle <span class="btn-icon-right"><i class="fa fa-pencil"></i></span></a>
+                                    <a href="/OurService/Delete/@item.ID" class="btn btn-danger mb-2">Sil <span class="btn-icon-right"><i class="fa fa-close"></i></span></a>
+                                </div>
+                            </td>
+                        </tr>
+
+                        counter++; // Her döngü adımında counter'ı artır
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

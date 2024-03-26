@@ -1,0 +1,72 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+@await Html.PartialAsync("/Views/AdminLayout/HeadPartial.cshtml")
+
+
+<body>
+
+    <!-- Preloader -->
+    @await Html.PartialAsync("/Views/AdminLayout/PreloaderPartial.cshtml")
+
+    <!-- Main wrapper start -->
+    <div id="main-wrapper">
+
+        <!-- Nav header -->
+        @await Html.PartialAsync("/Views/AdminLayout/NavheaderPartial.cshtml")
+        
+        <!-- Header -->
+        @await Html.PartialAsync("/Views/AdminLayout/HeaderPartial.cshtml")
+
+        <!-- Sidebar -->
+        @await Html.PartialAsync("/Views/AdminLayout/SidebarPartial.cshtml")
+
+        <!-- Content body -->
+        <div class="content-body">
+
+            <div class="row page-titles mx-0">
+                <div class="col p-md-0">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
+                        <li class="breadcrumb-item active"><a href="javascript:void(0)">Home</a></li>
+                    </ol>
+                </div>
+            </div>
+            <!-- row -->
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                @RenderBody()
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #/ container -->
+        </div>
+        <!-- Content body end -->
+
+        <!-- Footer -->
+        @await Html.PartialAsync("/Views/AdminLayout/FooterPartial.cshtml")
+
+    </div>
+    <!-- Main wrapper end -->
+
+    <!-- Scripts -->
+    <script src="~/adminweb/plugins/common/common.min.js"></script>
+    <script src="~/adminweb/js/custom.min.js"></script>
+    <script src="~/adminweb/js/settings.js"></script>
+    <script src="~/adminweb/js/gleek.js"></script>
+    <script src="~/adminweb/js/styleSwitcher.js"></script>
+
+</body>
+
+</html>
