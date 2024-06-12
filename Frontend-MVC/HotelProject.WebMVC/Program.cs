@@ -1,32 +1,35 @@
-using HotelProject.WebUI.ApiServices;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 //Http Client
-builder.Services.AddHttpClient<OurServiceApiService>("OurServiceApiClient", client =>
+builder.Services.AddHttpClient("UserApiClient", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["BaseUrl"]);
 });
 
-builder.Services.AddHttpClient<RoomApiService>("RoomApiClient", client =>
+builder.Services.AddHttpClient("OurServiceApiClient", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["BaseUrl"]);
 });
 
-builder.Services.AddHttpClient<StaffApiService>("StaffApiClient", client =>
+builder.Services.AddHttpClient("RoomApiClient", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["BaseUrl"]);
 });
 
-builder.Services.AddHttpClient<SubscribeApiService>("SubscribeApiClient", client =>
+builder.Services.AddHttpClient("StaffApiClient", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["BaseUrl"]);
 });
 
-builder.Services.AddHttpClient<TestimonialApiService>("TestimonialApiClient", client =>
+builder.Services.AddHttpClient("SubscribeApiClient", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["BaseUrl"]);
+});
+
+builder.Services.AddHttpClient("TestimonialApiClient", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["BaseUrl"]);
 });

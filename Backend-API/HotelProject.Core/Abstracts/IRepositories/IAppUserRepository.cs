@@ -5,6 +5,5 @@ namespace HotelProject.Core.Abstracts.IRepositories
 {
     public interface IAppUserRepository : IRepository<AppUser>
     {
-        Task<bool> AddUserAsync(AppUser user);
     }
 }

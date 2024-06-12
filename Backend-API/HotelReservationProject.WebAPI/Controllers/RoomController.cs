@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
 using HotelProject.Core.Abstracts.IService;
-using HotelProject.Core.Concrates.DTOs.CustomResponseDto;
-using HotelProject.Core.Concrates.DTOs.NoContentDto;
 using HotelProject.Core.Concrates.DTOs.RoomDto;
 using HotelProject.Core.Concrates.Entities;
-using HotelProject.WebAPI.Controllers.BaseController;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelProject.WebAPI.Controllers
 {
-    public class RoomController : CustomBaseController
+    [Route("api/room")]
+    [ApiController]
+    public class RoomController : ControllerBase
     {
         private readonly IRoomService _service;
         private readonly IMapper _mapper;
@@ -20,50 +19,49 @@ namespace HotelProject.WebAPI.Controllers
             _mapper = mapper;
         }
 
-        //GET: api/Room
+        //GET: api/room
         [HttpGet]
-        public IActionResult GetAllRoom()
+        public IActionResult AllActives()
         {
-            var allRooms = _service.GetActives();
-            var roomDtos = _mapper.Map<List<RoomDTO>>(allRooms.ToList());
-            return CreateResult(CustomResponseDTO<List<RoomDTO>>.Success(200, roomDtos));
+            var allRoom = _service.GetActives();
+            var RoomDtos = _mapper.Map<List<RoomDTO>>(allRoom);
+            return Ok(RoomDtos);
         }
 
-        //GET: api/Room/id
+        //GET: api/room/id
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetRoomById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var room = await _service.FindAsync(id);
-            var roomDto = _mapper.Map<UpdateRoomDTO>(room);
-            return CreateResult(CustomResponseDTO<UpdateRoomDTO>.Success(200, roomDto));
+            var Room = await _service.FindAsync(id);
+            var RoomDto = _mapper.Map<RoomDTO>(Room);
+            return Ok(RoomDto);
         }
 
-        //CREATE: api/Room
+        //CREATE: api/room
         [HttpPost]
-        public async Task<IActionResult> CreateRoom(CreateRoomDTO createRoomDto)
+        public async Task<IActionResult> Create(CreateRoomDTO createRoomDto)
         {
-            var room = _mapper.Map<Room>(createRoomDto);
-            await _service.AddAsync(room);
-            var roomDto = _mapper.Map<CreateRoomDTO>(room);
-            return CreateResult(CustomResponseDTO<CreateRoomDTO>.Success(201, roomDto)); //201: Created
+            var Room = _mapper.Map<Room>(createRoomDto);
+            await _service.AddAsync(Room);
+            return StatusCode(201);
         }
 
-        //UPDATE: api/Room
+        //UPDATE: api/room
         [HttpPut]
-        public async Task<IActionResult> UpdateRoom(UpdateRoomDTO updateRoomDto)
+        public async Task<IActionResult> Update(UpdateRoomDTO updateRoomDto)
         {
-            var room = _mapper.Map<Room>(updateRoomDto);
-            await _service.UpdateAsync(room);
-            return CreateResult(CustomResponseDTO<NoContentDTO>.Success(204)); //204: No Content
+            var Room = _mapper.Map<Room>(updateRoomDto);
+            await _service.UpdateAsync(Room);
+            return NoContent();
         }
 
-        //DELETE: api/Room/id
+        //DELETE: api/room/id
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRoom(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var room = await _service.FindAsync(id);
-            _service.Delete(room);
-            return CreateResult(CustomResponseDTO<NoContentDTO>.Success(204)); //204: No Content
+            var Room = await _service.FindAsync(id);
+            _service.Delete(Room);
+            return NoContent();
         }
     }
 }

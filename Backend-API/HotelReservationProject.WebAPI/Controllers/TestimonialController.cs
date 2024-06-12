@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
 using HotelProject.Core.Abstracts.IService;
-using HotelProject.Core.Concrates.DTOs.CustomResponseDto;
-using HotelProject.Core.Concrates.DTOs.NoContentDto;
 using HotelProject.Core.Concrates.DTOs.TestimonialDto;
 using HotelProject.Core.Concrates.Entities;
-using HotelProject.WebAPI.Controllers.BaseController;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelProject.WebAPI.Controllers
 {
-    public class TestimonialController : CustomBaseController
+    [Route("api/testimmonial")]
+    [ApiController]
+    public class TestimonialController : ControllerBase
     {
         private readonly ITestimonialService _service;
         private readonly IMapper _mapper;
@@ -20,50 +19,49 @@ namespace HotelProject.WebAPI.Controllers
             _mapper = mapper;
         }
 
-        //GET: api/Testimonial
+        //GET: api/testimmonial
         [HttpGet]
-        public IActionResult GetAllTestimonial()
+        public IActionResult AllActives()
         {
             var allTestimonial = _service.GetActives();
-            var testimonialDtos = _mapper.Map<List<TestimonialDTO>>(allTestimonial.ToList());
-            return CreateResult(CustomResponseDTO<List<TestimonialDTO>>.Success(200, testimonialDtos));
+            var testimonialDtos = _mapper.Map<List<TestimonialDTO>>(allTestimonial);
+            return Ok(testimonialDtos);
         }
 
-        //GET: api/Testimonial/id
+        //GET: api/testimmonial/id
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetTestimonialById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var testimonial = await _service.FindAsync(id);
-            var testimonialDto = _mapper.Map<UpdateTestimonialDTO>(testimonial);
-            return CreateResult(CustomResponseDTO<UpdateTestimonialDTO>.Success(200, testimonialDto));
+            var testimonialDto = _mapper.Map<TestimonialDTO>(testimonial);
+            return Ok(testimonialDto);
         }
 
-        //CREATE: api/Testimonial
+        //CREATE: api/testimmonial
         [HttpPost]
-        public async Task<IActionResult> CreateTestimonial(CreateTestimonialDTO createTestimonialDto)
+        public async Task<IActionResult> Create(CreateTestimonialDTO createTestimonialDto)
         {
             var testimonial = _mapper.Map<Testimonial>(createTestimonialDto);
             await _service.AddAsync(testimonial);
-            var testimonialDto = _mapper.Map<CreateTestimonialDTO>(testimonial);
-            return CreateResult(CustomResponseDTO<CreateTestimonialDTO>.Success(201, testimonialDto)); //201: Created
+            return StatusCode(201);
         }
 
-        //UPDATE: api/Testimonial
+        //UPDATE: api/testimmonial
         [HttpPut]
-        public async Task<IActionResult> UpdateTestimonial(UpdateTestimonialDTO updateTestimonialDto)
+        public async Task<IActionResult> Update(UpdateTestimonialDTO updateTestimonialDto)
         {
             var testimonial = _mapper.Map<Testimonial>(updateTestimonialDto);
             await _service.UpdateAsync(testimonial);
-            return CreateResult(CustomResponseDTO<NoContentDTO>.Success(204)); //204: No Content
+            return NoContent();
         }
 
-        //DELETE: api/Testimonial/id
+        //DELETE: api/testimmonial/id
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTestimonial(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var testimonial = await _service.FindAsync(id);
             _service.Delete(testimonial);
-            return CreateResult(CustomResponseDTO<NoContentDTO>.Success(204)); //204: No Content
+            return NoContent();
         }
     }
 }

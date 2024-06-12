@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
 using HotelProject.Core.Abstracts.IService;
-using HotelProject.Core.Concrates.DTOs.CustomResponseDto;
-using HotelProject.Core.Concrates.DTOs.NoContentDto;
 using HotelProject.Core.Concrates.DTOs.OurServiceDto;
 using HotelProject.Core.Concrates.Entities;
-using HotelProject.WebAPI.Controllers.BaseController;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelProject.WebAPI.Controllers
 {
-    public class OurServiceController : CustomBaseController
+    [Route("api/ourservice")]
+    [ApiController]
+    public class OurServiceController : ControllerBase
     {
         private readonly IOurServiceService _service;
         private readonly IMapper _mapper;
@@ -20,50 +19,49 @@ namespace HotelProject.WebAPI.Controllers
             _mapper = mapper;
         }
 
-        //GET: api/OurService
+        //GET: api/ourservice
         [HttpGet]
-        public IActionResult GetAllOurService()
+        public IActionResult AllActives()
         {
-            var allOurServices = _service.GetActives();
-            var ourServiceDtos = _mapper.Map<List<OurServiceDTO>>(allOurServices.ToList());
-            return CreateResult(CustomResponseDTO<List<OurServiceDTO>>.Success(200, ourServiceDtos));
+            var allOurService = _service.GetActives();
+            var OurServiceDtos = _mapper.Map<List<OurServiceDTO>>(allOurService);
+            return Ok(OurServiceDtos);
         }
 
-        //GET: api/OurService/id
+        //GET: api/ourservice/id
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOurServiceById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var ourService = await _service.FindAsync(id);
-            var ourServiceDto = _mapper.Map<UpdateOurServiceDTO>(ourService);
-            return CreateResult(CustomResponseDTO<UpdateOurServiceDTO>.Success(200, ourServiceDto));
+            var OurService = await _service.FindAsync(id);
+            var OurServiceDto = _mapper.Map<OurServiceDTO>(OurService);
+            return Ok(OurServiceDto);
         }
 
-        //CREATE: api/OurService
+        //CREATE: api/ourservice
         [HttpPost]
-        public async Task<IActionResult> CreateOurService(CreateOurServiceDTO createOurServiceDto)
+        public async Task<IActionResult> Create(CreateOurServiceDTO createOurServiceDto)
         {
-            var ourService = _mapper.Map<OurService>(createOurServiceDto);
-            await _service.AddAsync(ourService);
-            var ourServiceDto = _mapper.Map<CreateOurServiceDTO>(ourService);
-            return CreateResult(CustomResponseDTO<CreateOurServiceDTO>.Success(201, ourServiceDto)); //201: Created
+            var OurService = _mapper.Map<OurService>(createOurServiceDto);
+            await _service.AddAsync(OurService);
+            return StatusCode(201);
         }
 
-        //UPDATE: api/OurService
+        //UPDATE: api/ourservice
         [HttpPut]
-        public async Task<IActionResult> UpdateOurService(UpdateOurServiceDTO updateOurServiceDto)
+        public async Task<IActionResult> Update(UpdateOurServiceDTO updateOurServiceDto)
         {
-            var ourService = _mapper.Map<OurService>(updateOurServiceDto);
-            await _service.UpdateAsync(ourService);
-            return CreateResult(CustomResponseDTO<NoContentDTO>.Success(204)); //204: No Content
+            var OurService = _mapper.Map<OurService>(updateOurServiceDto);
+            await _service.UpdateAsync(OurService);
+            return NoContent();
         }
 
-        //DELETE: api/OurService/id
+        //DELETE: api/ourservice/id
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOurService(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var ourService = await _service.FindAsync(id);
-            _service.Delete(ourService);
-            return CreateResult(CustomResponseDTO<NoContentDTO>.Success(204)); //204: No Content
+            var OurService = await _service.FindAsync(id);
+            _service.Delete(OurService);
+            return NoContent();
         }
     }
 }

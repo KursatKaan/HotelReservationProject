@@ -34,10 +34,12 @@ namespace HotelProject.Service.Mapping
             CreateMap<Testimonial, UpdateTestimonialDTO>().ReverseMap();
 
             CreateMap<AppUser, UserDTO>()
-                .ForMember(x=>x.ID, opt => opt.MapFrom(src=>src.Id)) // ID özelliğini eşleştir
-                .ReverseMap(); 
+                .ForMember(x => x.ID, opt => opt.MapFrom(src => src.Id)) // ID özelliğini eşleştir
+                .ReverseMap();
             CreateMap<AppUser, CreateUserDTO>().ReverseMap();
-            CreateMap<AppUser, UpdateUserDTO>().ReverseMap();
+            CreateMap<AppUser, UpdateUserDTO>()
+                .ForMember(x => x.ID, opt => opt.MapFrom(src => src.Id))
+                .ReverseMap();
         }
     }
 }

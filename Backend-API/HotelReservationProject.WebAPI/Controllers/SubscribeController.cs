@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
 using HotelProject.Core.Abstracts.IService;
-using HotelProject.Core.Concrates.DTOs.CustomResponseDto;
-using HotelProject.Core.Concrates.DTOs.NoContentDto;
 using HotelProject.Core.Concrates.DTOs.SubscribeDto;
 using HotelProject.Core.Concrates.Entities;
-using HotelProject.WebAPI.Controllers.BaseController;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelProject.WebAPI.Controllers
 {
-    public class SubscribeController : CustomBaseController
+    [Route("api/subscribe")]
+    [ApiController]
+    public class SubscribeController : ControllerBase
     {
         private readonly ISubscribeService _service;
         private readonly IMapper _mapper;
@@ -20,50 +19,49 @@ namespace HotelProject.WebAPI.Controllers
             _mapper = mapper;
         }
 
-        //GET: api/Subscribe
+        //GET: api/subscribe
         [HttpGet]
-        public IActionResult GetAllSubscribe()
+        public IActionResult AllActives()
         {
             var allSubscribe = _service.GetActives();
-            var subscribeDtos = _mapper.Map<List<SubscribeDTO>>(allSubscribe.ToList());
-            return CreateResult(CustomResponseDTO<List<SubscribeDTO>>.Success(200, subscribeDtos));
+            var subscribeDtos = _mapper.Map<List<SubscribeDTO>>(allSubscribe);
+            return Ok(subscribeDtos);
         }
 
-        //GET: api/Subscribe/id
+        //GET: api/subscribe/id
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetSubscribeById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var subscribe = await _service.FindAsync(id);
-            var subscribeDto = _mapper.Map<UpdateSubscribeDTO>(subscribe);
-            return CreateResult(CustomResponseDTO<UpdateSubscribeDTO>.Success(200, subscribeDto));
+            var subscribeDto = _mapper.Map<SubscribeDTO>(subscribe);
+            return Ok(subscribeDto);
         }
 
-        //CREATE: api/Subscribe
+        //CREATE: api/subscribe
         [HttpPost]
-        public async Task<IActionResult> CreateSubscribe(CreateSubscribeDTO createSubscribeDto)
+        public async Task<IActionResult> Create(CreateSubscribeDTO createSubscribeDto)
         {
             var subscribe = _mapper.Map<Subscribe>(createSubscribeDto);
             await _service.AddAsync(subscribe);
-            var subscribeDto = _mapper.Map<CreateSubscribeDTO>(subscribe);
-            return CreateResult(CustomResponseDTO<CreateSubscribeDTO>.Success(201, subscribeDto)); //201: Created
+            return StatusCode(201);
         }
 
-        //UPDATE: api/Subscribe
+        //UPDATE: api/subscribe
         [HttpPut]
-        public async Task<IActionResult> UpdateSubscribe(UpdateSubscribeDTO updateSubscribeDto)
+        public async Task<IActionResult> Update(UpdateSubscribeDTO updateSubscribeDto)
         {
             var subscribe = _mapper.Map<Subscribe>(updateSubscribeDto);
             await _service.UpdateAsync(subscribe);
-            return CreateResult(CustomResponseDTO<NoContentDTO>.Success(204)); //204: No Content
+            return NoContent();
         }
 
-        //DELETE: api/Subscribe/id
+        //DELETE: api/subscribe/id
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSubscribe(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var subscribe = await _service.FindAsync(id);
             _service.Delete(subscribe);
-            return CreateResult(CustomResponseDTO<NoContentDTO>.Success(204)); //204: No Content
+            return NoContent();
         }
     }
 }

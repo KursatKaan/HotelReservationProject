@@ -1,88 +1,122 @@
 ﻿using AutoMapper;
-using HotelProject.Core.Abstracts.IService;
 using HotelProject.Core.Concrates.DTOs.AppUserDto;
-using HotelProject.Core.Concrates.DTOs.CustomResponseDto;
-using HotelProject.Core.Concrates.DTOs.NoContentDto;
 using HotelProject.Core.Concrates.Entities;
-using HotelProject.WebAPI.Controllers.BaseController;
+using HotelProject.Core.Concrates.Enums;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelProject.WebAPI.Controllers
 {
-    public class AppUserController : CustomBaseController
+    [Route("api/user")]
+    [ApiController]
+    public class AppUserController : ControllerBase
     {
-        private readonly IAppUserService _service;
+        private readonly UserManager<AppUser> _userManager;
+        private IPasswordHasher<AppUser> _passwordHasher;
         private readonly IMapper _mapper;
 
-        public AppUserController(IAppUserService service, IMapper mapper)
+        public AppUserController(IMapper mapper, UserManager<AppUser> userManager, IPasswordHasher<AppUser> passwordHasher = null)
         {
-            _service = service;
+
             _mapper = mapper;
+            _userManager = userManager;
+            _passwordHasher = passwordHasher;
         }
 
-        //GET: api/User
+        //GET: api/user
         [HttpGet]
-        public IActionResult GetAllUser()
+        public async Task<IActionResult> AllActiveUsers()
         {
-            var allUser = _service.GetActives();
-            var userDtos = _mapper.Map<List<UserDTO>>(allUser.ToList());
-            return CreateResult(CustomResponseDTO<List<UserDTO>>.Success(200, userDtos));
+            var activeUsers = await _userManager.Users
+                                                .Where(u => u.Status != DataStatus.Deleted)
+                                                .ToListAsync();
+
+            var userDtos = _mapper.Map<List<UserDTO>>(activeUsers);
+
+            return Ok(userDtos);
         }
 
-        //GET: api/User/id
+        //GET: api/user/id
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUserById(int id)
+        public async Task<IActionResult> GetUserDetails(int id)
         {
-            var user = await _service.FindAsync(id);
-            var userDto = _mapper.Map<UpdateUserDTO>(user);
-            return CreateResult(CustomResponseDTO<UpdateUserDTO>.Success(200, userDto));
+            var user = await _userManager.FindByIdAsync(id.ToString());
+
+            if (user == null)
+                return NotFound();
+
+            var userDto = _mapper.Map<UserDTO>(user);
+
+            return Ok(userDto);
         }
 
-        //CREATE: api/User
-        [HttpPost]
-        public async Task<IActionResult> CreateUser(CreateUserDTO createUserDto)
+        //CREATE: api/user/register
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] CreateUserDTO createUserDto)
         {
             AppUser appUser = new()
             {
                 Name = createUserDto.Name,
                 Surname = createUserDto.Surname,
+                UserName = createUserDto.Email,
                 Email = createUserDto.Email,
                 PasswordHash = createUserDto.Password,
-                UserName = createUserDto.Email,
+                PhoneNumber = createUserDto.PhoneNumber,
                 City = createUserDto.City,
-                PhoneNumber = createUserDto.PhoneNumber
+                SecurityStamp = Guid.NewGuid().ToString()
             };
 
-            bool result = await _service.CreateUserAsync(appUser);
-            if (result)
-            {
-                var userDto = _mapper.Map<UserDTO>(appUser);
-                return CreateResult(CustomResponseDTO<UserDTO>.Success(201, userDto)); //201: Created
-            }
-            return BadRequest("An error occurred while creating the user");
+            var result = await _userManager.CreateAsync(appUser);
 
-            //var user = _mapper.Map<AppUser>(createUserDto);
-            //await _service.CreateUserAsync(user);
-            //var userDto = _mapper.Map<CreateUserDTO>(user);
-            //return CreateResult(CustomResponseDTO<CreateUserDTO>.Success(201, userDto)); //201: Created
+            if (!result.Succeeded)
+                return BadRequest();
+
+            return StatusCode(201);
+
         }
 
-        //UPDATE: api/User
+        //UPDATE: api/user
         [HttpPut]
-        public async Task<IActionResult> UpdateUser(UpdateUserDTO updateUserDto)
+        public async Task<IActionResult> Update([FromBody] UpdateUserDTO updateUserDto)
         {
-            var user = _mapper.Map<AppUser>(updateUserDto);
-            await _service.UpdateAsync(user);
-            return CreateResult(CustomResponseDTO<NoContentDTO>.Success(204)); //204: No Content
+            var user = await _userManager.FindByEmailAsync(updateUserDto.Email);
+
+            if (user == null)
+                return NotFound();
+
+            user.Name = updateUserDto.Name;
+            user.Surname = updateUserDto.Surname;
+            user.UserName = updateUserDto.Email;
+            user.Email = updateUserDto.Email;
+            user.PasswordHash = _passwordHasher.HashPassword(user, updateUserDto.Password);
+            user.PhoneNumber = updateUserDto.PhoneNumber;
+            user.City = updateUserDto.City;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+                return BadRequest();
+
+            user.Status = DataStatus.Updated;
+            user.ModifiedDate = DateTime.Now;
+
+            return NoContent();
         }
 
-        //DELETE: api/User/id
+        //DELETE: api/user/id
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var user = await _service.FindAsync(id);
-            _service.Delete(user);
-            return CreateResult(CustomResponseDTO<NoContentDTO>.Success(204)); //204: No Content
+            var user = await _userManager.FindByIdAsync(id.ToString());
+
+            if (user == null)
+                return NotFound();
+
+            user.Status -= DataStatus.Deleted;
+            user.DeletedDate = DateTime.Now;
+
+            return NoContent();
         }
     }
 }
