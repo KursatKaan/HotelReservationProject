@@ -61,9 +61,9 @@ namespace HotelProject.WebAPI.Controllers
                 Surname = createUserDto.Surname,
                 UserName = createUserDto.Email,
                 Email = createUserDto.Email,
-                PasswordHash = createUserDto.Password,
                 PhoneNumber = createUserDto.PhoneNumber,
-                City = createUserDto.City,
+                PasswordHash = createUserDto.Password,
+                City = createUserDto.City.ToString(),
                 SecurityStamp = Guid.NewGuid().ToString()
             };
 
@@ -91,7 +91,8 @@ namespace HotelProject.WebAPI.Controllers
             user.Email = updateUserDto.Email;
             user.PasswordHash = _passwordHasher.HashPassword(user, updateUserDto.Password);
             user.PhoneNumber = updateUserDto.PhoneNumber;
-            user.City = updateUserDto.City;
+            user.City = updateUserDto.City.ToString();
+            user.SecurityStamp = Guid.NewGuid().ToString();
 
             var result = await _userManager.UpdateAsync(user);
 

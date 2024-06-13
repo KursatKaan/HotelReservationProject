@@ -22,7 +22,7 @@ namespace HotelProject.WebUI.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _httpClient.PostAsJsonAsync("api/user", createUserDTO);
+                await _httpClient.PostAsJsonAsync("api/user/register", createUserDTO);
 
                 return RedirectToAction("Index", "Login");
 

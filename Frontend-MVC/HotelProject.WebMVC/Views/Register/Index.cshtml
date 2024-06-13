@@ -1,4 +1,5 @@
-﻿@{
+﻿@model CreateUserDTO
+@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -11,30 +12,54 @@
         </div>
         <div class="col-md-6 mx-auto">
             <div class="wow fadeInUp" data-wow-delay="0.2s">
-                <form>
+                <form method="post">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="name" placeholder="Your Name">
-                                <label for="name">Your Name</label>
+                                <input type="text" class="form-control" id="name" placeholder="Ad" asp-for="Name">
+                                <span asp-validation-for="Name" class="text-warning"></span>
+                                <label for="name">Ad</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="email" class="form-control" id="email" placeholder="Your Email">
-                                <label for="email">Your Email</label>
+                                <input type="text" class="form-control" id="surname" placeholder="Soyad" asp-for="Surname">
+                                <span asp-validation-for="Surname" class="text-warning"></span>
+                                <label for="surname">Soyad</label>
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="subject" placeholder="Subject">
-                                <label for="subject">Subject</label>
+                                <select class="form-select" id="city" asp-for="City">
+                                    <option value="">Şehir Seçiniz</option>
+                                    @foreach (var city in Enum.GetNames(typeof(City)))
+                                    {
+                                        <option value="@city">@city</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="City" class="text-warning"></span>
+                                <label for="city">Şehir</label>
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-md-6">
                             <div class="form-floating">
-                                <textarea class="form-control" placeholder="Leave a message here" id="message" style="height: 150px"></textarea>
-                                <label for="message">Message</label>
+                                <input type="tel" class="form-control" id="phone" placeholder="Cep Telefonu" pattern="[0-9]{10}" maxlength="10" value="5" asp-for="PhoneNumber">
+                                <span asp-validation-for="PhoneNumber" class="text-warning"></span>
+                                <label for="phone">Cep Telefonu</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="email" placeholder="E-Posta" asp-for="Email">
+                                <span asp-validation-for="Email" class="text-warning"></span>
+                                <label for="email">E-Posta</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input type="password" class="form-control" id="password" placeholder="Şifre" asp-for="Password">
+                                <span asp-validation-for="Password" class="text-warning"></span>
+                                <label for="password">Şifre</label>
                             </div>
                         </div>
                         <div class="col-12">
@@ -46,5 +71,5 @@
         </div>
     </div>
 </div>
-            
+
 
